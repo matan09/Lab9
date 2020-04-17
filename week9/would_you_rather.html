@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <script src="https://unpkg.com/vue@2.6.7/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <h2>Would You Rather..</h2>
+
+        <!--add wouldRatherQuestion component in a html tag form-->
+          <!--this is not a html, but a html understood by Vue,
+        and we need to send data from out parent vue instance to our wouldYouRatherQuestionComponent
+        they we do that is by using the v-bind directive-->
+        <would-you-rather-question 
+            v-bind:question="question"
+            v-bind:answer1="answer1"
+            v-bind:answer2="answer2"
+            v-on:answer-changed=" answerChanged"
+
+        >
+        </would-you-rather-question>
+          <!--we are v-binding the question data to to question props in the wouldYouRatheQuestionComponent-->
+
+        {{ userSelectionMessage }}
+
+
+
+
+    </div>
+
+    <script>
+        //create vue component
+        const wouldYouRatherQuestionComponent =  {
+            template: `
+                <div>
+                    <h2>{{ question }}</h2>
+                    <input type="radio" v-model="choice" v-bind:value="answer1" v-on:change="$emit('answer-changed', choice)">
+                    <label>{{answer1}}</label>
+                    <input type="radio" v-model="choice" v-bind:value="answer2" v-on:change="$emit('answer-changed', choice)">
+                    <label>{{answer2}}</label>
+                </div>
+            
+            
+            `,
+            data() {
+                return {// wouldYouRatherQuestionComponent will know the user answer
+                    choice: ""
+                }
+
+            },
+            // props are much like a data  but they are provided to a component by its parents
+            //data values are things that the component will store internally. are props are also data 
+            //but they are passed to the component by its parents
+            props: {
+                // the props will have the question
+                //in props we dont provide value, instead we provide types
+                question: String,
+                answer1: String,
+                answer2: String
+                
+            }
+        }
+
+        let app = new Vue({
+            el: "#app",
+            data() {
+                return{
+                    question: "...Would you rather be a famous inventor or a famous writer?",
+                    answer1: "inventor",
+                    answer2: "writer",
+                    userSelectionMessage: ""
+
+                }
+                
+            },
+            methods: {
+                answerChanged(answer) {
+                    console.log("Event emitted from child")
+                    this.userSelectionMessage = `Thanks! You selected ${answer}`
+                }
+                
+            },
+            // list of components
+            components: {
+                'would-you-rather-question': wouldYouRatherQuestionComponent
+            }
+        })
+
+    </script>
+
+</body>
+
+</html>
